@@ -50,41 +50,28 @@ class ShowArticle(Resource):
 
 class Login(Resource):
     def post(self):
-        # Step 1: Get the username from the request
         username = request.get_json()['username']
         
-        # Step 1: Find the user in the database by username
         user = User.query.filter(User.username == username).first()
         
-        # Step 2: Set the session with the user's ID
         session['user_id'] = user.id
         
-        # Step 3: Return the user as JSON with 200 status code
         return UserSchema().dump(user), 200
-
 
 class Logout(Resource):
     def delete(self):
-        # Step 2: Remove the user_id from the session
         session['user_id'] = None
         
-        # Step 3: Return no data with 204 status code
         return {}, 204
-
 
 class CheckSession(Resource):
     def get(self):
-        # Step 2: Get the user_id from the session
         user_id = session.get('user_id')
         
-        # Step 3: Check if user_id exists in session
         if user_id:
-            # Find the user by the ID stored in session
             user = User.query.filter(User.id == user_id).first()
-            # Return the user as JSON with 200 status code
             return UserSchema().dump(user), 200
         else:
-            # Return no data with 401 status code
             return {}, 401
 
 api.add_resource(ClearSession, '/clear')
